@@ -71,3 +71,54 @@ Each item becomes its own small upstream PR to `develop`, with its tests.
 - The `--run-files` field, Serializd genre sources, `--no-source-integrity` and `--delete-collections-labels`.
 - Testing on Windows: Windows command reading is checked only through Python's Windows mode, not on a real Windows machine.
 - The ImageMaid launcher (`modules/process_lifecycle.py:223`) has the same unguarded read, but nothing known builds a broken ImageMaid command. Noted for later.
+
+---
+
+## Record (2026-11-22)
+
+**Status:** built and checked, with no open problems. All three fixes are ready to go upstream. This branch holds the plan, the three fixes and this record. It is never merged. After approval, each fix is copied to its own branch without these notes.
+
+**What shipped on this branch:** three commits, each meant to become its own upstream PR. Each one applies on its own to upstream `develop` (`7eba0f24`) and passes its tests there.
+- `d59909f0` Reject divider characters that break the Kometa run command
+  - Changed: `_runCommand.js`, `modules/process_lifecycle.py`, `quickstart.py`.
+  - The Start button gets a 400 error with a clear message.
+  - Tests: JS, `test_start_stop.py`, `test_more_paths.py`.
+- `ffb6b811` Add the --timings option to the Kometa run options
+  - Changed: the five option lists and the template.
+  - The help text warns about builds from before July and before mid-October 2026.
+  - Tests: JS.
+- `912448eb` Require lowercase index in processing mode values
+  - Changed: `processingMode.js`.
+  - Tests: JS, plus one server case.
+
+**Checks:**
+- **Browser tests:** `npm test` passes: 1,934 tests.
+- **Build:** `npm run build` and eslint are clean.
+- **Python tests:** the full suite, with Kometa's default files in place, gives 2,780 passed, 16 skipped, 0 failed.
+- **Style:** ruff and black (line length 180) are clean.
+- **Commit-time checks:** every check passes on all files except the README spell check, which fails the same way on upstream `develop`.
+- **New tests:** they fail on upstream's code without the fixes. That is 10 browser tests and 3 Python tests.
+- **Edge cases:** only `"` and `\` change as dividers. `'`, `#`, `$`, `=`, `é` and `—` still work. `INDEX(A-F)`, `Index(a)` and `indeX(a-f)` are now refused in the browser. `index(A-F)`, `index(a-f)`, `index(A-F#)` and `added(...)` in any case still work.
+
+**Review rounds:**
+- Plan check: five corrections, all taken before approval. The most important: the dropdowns build `index(A-F)`, so only the word `index` may be case-checked.
+- QA: passed.
+- Security: clear. The run command is still started as a list of words without a shell. The new error text holds only the parser's fixed message, and it is shown as plain text.
+- Second security review: skipped. Its service has used up its monthly allowance.
+- Audit: approved, with two should-fix points.
+  - **Fixed:** an unreadable command now returns 400 (bad request), not 500, matching how the endpoint treats a bad processing mode.
+  - **Not changed:** see Decisions.
+
+**Decisions:**
+- **Restored `INDEX(...)` rows stay uppercase until edited.** A schedule row loaded with `INDEX(A-F)` shows dropdowns that would build `index(A-F)`. The row's saved text stays uppercase until the row is edited, so saving it unchanged is refused by the server.
+  - This was already true before this change.
+  - Such a value is rare, because the server never saves one.
+  - Left for a later batch, to keep this PR narrow.
+- **Divider:** the browser refuses `"` and `\` rather than quoting them specially. Quoting would keep two more characters working, but it is easier to break later.
+- **`--timings`:** offered without checking the installed Kometa version. Older builds ignore it, and the help text warns about the crash in builds from before mid-October 2026.
+
+## Upstream PRs (for Sean to open after final approval)
+Each one is opened from its own branch on the fork, cut from upstream `develop`, into `Kometa-Team/Quickstart:develop`.
+1. `fix-divider-quote-backslash`: "Reject divider characters that break the Kometa run command" (Bug Fix)
+2. `add-timings-run-option`: "Add the --timings option to the Kometa run options" (Feature/Tweak)
+3. `fix-processing-mode-index-case`: "Require lowercase index in processing mode values" (Bug Fix)
