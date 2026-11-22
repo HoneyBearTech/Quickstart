@@ -1,5 +1,7 @@
 # Plan: fixes-batch-1
 
+> **Final scope:** only the README fix and the `mal_all` fix are included. The original three-item plan below is kept for the record. Item 3 was dropped because it could let a setting be saved that then fails the export check (see the Record at the end).
+
 ## What Sean asked for
 "review https://github.com/Kometa-Team/Quickstart for work similar to what another team does for custom-components/pyscript", then: "I recreated the fork".
 
@@ -48,11 +50,11 @@ Each item becomes its own small upstream PR to `develop`, with its tests.
 
 ## Record (2026-11-22)
 
-**Status:** built and checked, with no open problems. Two of the three planned fixes are ready to go upstream. The third was dropped (see Decisions). Nothing has been sent upstream yet.
+**Status:** built and checked, with no open problems. This branch holds the plan, both fixes and this record; it is never merged. After approval, each fix is copied to its own branch without these notes. Two of the three planned fixes are ready to go upstream. The third was dropped (see Decisions). Nothing has been sent upstream yet.
 
 **What shipped on this branch:** two commits, each meant to become its own upstream PR. Each one applies on its own to upstream `develop` (`7eba0f24`) and passes its tests there.
 - `84b0af75` Fix outdated README docker run example and Logscan scope note: `README.md` only, +2/−2.
-- `9f0d8437` Fix mal_all genre source lost on import and export: `static/json/quickstart_attributes.json` +5, `modules/dependency_reasons.py` +2/−2, 3 new tests and 1 new test case.
+- `9f0d8437` Fix mal_all genre source lost on import and export: `static/json/quickstart_attributes.json` +5, `modules/dependency_reasons.py` +2/−2, 2 new tests and 1 new case in an existing test.
 
 **Checks:**
 - **Tests:** the full Python test suite passes on Python 3.13: 2,764 passed, 35 skipped, 0 failed. ruff, black (line length 180), eslint and the JSON check are clean.
