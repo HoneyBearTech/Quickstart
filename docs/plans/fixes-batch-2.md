@@ -11,7 +11,7 @@ Checked on upstream `develop` `7eba0f24`. All browser tests (1,915) now run on t
   - On the Kometa launch paths, only one place reads the command without catching the error: `modules/process_lifecycle.py:157`.
 - **Kometa's `--timings` option is missing from the Kometa page.**
   - Kometa added it in July 2026.
-  - Older Kometa builds ignore options they don't know, so offering it can't break an older install. The box would just do nothing there.
+  - Kometa builds from before July 2026 ignore options they don't know, so there the box just does nothing. *(Corrected after research: builds from before mid-October 2026 can crash on startup with it. See item 2 and the Record.)*
 - **Capital `INDEX(...)` in a processing mode.**
   - The browser accepts `INDEX(A-F)`, but Quickstart's server and Kometa's own config schema need the word `index` in lowercase. The letters inside the brackets can be either case.
   - So the browser says it's fine, and saving or starting the run then fails.
@@ -38,7 +38,7 @@ Each item becomes its own small upstream PR to `develop`, with its tests.
 3. **Capital `INDEX(...)`** (`static/local-js/modules/processingMode.js`, tests).
    - The browser check will need the word `index` in lowercase, matching the server and Kometa's schema. The letters inside the brackets can still be either case, as the server allows. `added(...)` stays case-insensitive, because all three already accept that.
    - The dropdowns already build `index(A-F)`, so only text typed by hand is affected.
-   - Loading a saved `INDEX(...)` value into the dropdowns keeps turning it into `index(...)`, as it does today.
+   - Loading a saved `INDEX(...)` value into the dropdowns still shows it as `index(...)`, as it does today. *(The audit found the row's saved text stays uppercase until the row is edited. See the Record.)*
    - *Check:*
      - New browser tests: `INDEX(A-F)` and `Index(a)` typed by hand are refused.
      - `index(A-F)`, `index(a-f)` and `index(A-F#)` are still accepted, and saved ranges still load into the dropdowns.
